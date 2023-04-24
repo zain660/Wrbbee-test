@@ -93,15 +93,13 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        $blank_array = [];
-        $manu_items = MenuItem::all();
-        foreach($manu_items as $key=>$manu_item){
-            $manu_items[$key]['childern'] = $manu_item->where('parent_id',$manu_item->id)->get();
-            array_push($blank_array,$manu_items);
-        }
+        $manu_items = MenuItem::where('parent_id',1)->with(['MenuChildren' => function ($query){
+            $query->get();
+        }])->get();
+        // dd($manu_items); 
 
         return response()->json([
-            'data' => $blank_array
+            'data' => $manu_items
         ]);
     }
 }
